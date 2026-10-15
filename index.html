@@ -80,6 +80,22 @@
   </form>
 
   <p id="status"></p>
+  <details id="tarotAdmin" style="margin:20px 0;padding:15px;background:#f7f3f8;border-radius:12px;">
+  <summary style="cursor:pointer;font-weight:bold;">🔐 Ответ таролога</summary>
+
+  <p>Введите секретный пароль, чтобы опубликовать послание.</p>
+
+  <input id="adminSecret" type="password" placeholder="Секретный пароль">
+
+  <label for="replyCommentId">Номер комментария</label>
+  <input id="replyCommentId" type="number" min="1" placeholder="Например, 5">
+
+  <label for="tarotReply">Ваше послание</label>
+  <textarea id="tarotReply" maxlength="3000" placeholder="Напишите трактовку карты Таро..."></textarea>
+
+  <button id="publishReply" type="button">Опубликовать послание</button>
+  <p id="replyStatus"></p>
+</details>
   <h2>Обсуждение</h2>
   <div id="comments">Загрузка комментариев…</div>
 </main>
