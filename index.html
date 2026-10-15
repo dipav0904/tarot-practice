@@ -49,6 +49,20 @@
     }
     .author { font-weight: bold; }
     .date { color: #817889; font-size: 12px; margin-top: 5px; }
+    .reply {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f7f0fb;
+      border-left: 3px solid #69468a;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .reply-title {
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #69468a;
+    }
     #status { margin: 12px 0; font-size: 14px; }
   </style>
 </head>
@@ -58,7 +72,8 @@
   <p>Обсуждаем публикацию и делимся мнениями.</p>
 
   <form id="commentForm">
-    <input id="author" maxlength="60" placeholder="Ваше имя" required>
+    <input id="author" maxlength="60"
+      placeholder="Ваше имя" required>
     <textarea id="content" maxlength="3000"
       placeholder="Напишите комментарий..." required></textarea>
     <button type="submit">Отправить комментарий</button>
@@ -87,12 +102,13 @@
   async function loadComments() {
     const { data, error } = await db
       .from("comments")
-      .select("author_name, content, created_at")
+      .select("id, author_name, content, created_at, reply, replied_at")
       .eq("post_id", postId)
       .order("created_at", { ascending: true });
 
     if (error) {
-      list.textContent = "Не удалось загрузить комментарии. Проверьте настройки доступа.";
+      list.textContent =
+        "Не удалось загрузить комментарии. Проверьте настройки доступа.";
       console.error(error);
       return;
     }
@@ -117,9 +133,36 @@
 
       const date = document.createElement("div");
       date.className = "date";
-      date.textContent = new Date(item.created_at).toLocaleString("ru-RU");
+      date.textContent =
+        new Date(item.created_at).toLocaleString("ru-RU");
 
       block.append(author, content, date);
+
+      if (item.reply) {
+        const reply = document.createElement("div");
+        reply.className = "reply";
+
+        const title = document.createElement("div");
+        title.className = "reply-title";
+        title.textContent = "🔮 Послание от Таро";
+
+        const text = document.createElement("div");
+        text.textContent = item.reply;
+
+        reply.append(title, text);
+
+        if (item.replied_at) {
+          const replyDate = document.createElement("div");
+          replyDate.className = "date";
+          replyDate.textContent =
+            "Ответ опубликован: " +
+            new Date(item.replied_at).toLocaleString("ru-RU");
+          reply.append(replyDate);
+        }
+
+        block.append(reply);
+      }
+
       list.appendChild(block);
     });
   }
@@ -143,7 +186,8 @@
     });
 
     if (error) {
-      status.textContent = "Не удалось отправить комментарий. Нужно проверить настройки доступа.";
+      status.textContent =
+        "Не удалось отправить комментарий. Проверьте настройки доступа.";
       console.error(error);
       return;
     }
