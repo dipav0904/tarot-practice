@@ -7,7 +7,26 @@
   <title>Комментарии к Таро</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body {
+    body 
+    
+<div id="tarotLogin" style="margin:20px 0;padding:15px;background:#f7f3f8;border-radius:12px;">
+  <h2>🔐 Вход таролога</h2>
+  <input id="loginPassword" type="password" placeholder="Пароль таролога" autocomplete="current-password">
+  <button id="loginButton" type="button">Войти</button>
+  <p id="loginStatus"></p>
+</div>
+
+<details id="tarotAdmin" style="display:none;margin:20px 0;padding:15px;background:#f7f3f8;border-radius:12px;">
+  <summary style="cursor:pointer;font-weight:bold;">🔮 Режим таролога</summary>
+  <p>Вы вошли в режим таролога.</p>
+  <label for="replyCommentId">Номер комментария</label>
+  <input id="replyCommentId" type="number" min="1" placeholder="Например, 5">
+  <label for="tarotReply">Ваше послание</label>
+  <textarea id="tarotReply" maxlength="3000" placeholder="Напишите трактовку карты Таро..."></textarea>
+  <button id="publishReply" type="button">Опубликовать послание</button>
+  <p id="replyStatus"></p>
+</details>
+    {
       margin: 0;
       padding: 20px;
       background: #f7f3f8;
