@@ -7,26 +7,8 @@
   <title>Комментарии к Таро</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body 
-    
-<div id="tarotLogin" style="margin:20px 0;padding:15px;background:#f7f3f8;border-radius:12px;">
-  <h2>🔐 Вход таролога</h2>
-  <input id="loginPassword" type="password" placeholder="Пароль таролога" autocomplete="current-password">
-  <button id="loginButton" type="button">Войти</button>
-  <p id="loginStatus"></p>
-</div>
-
-<details id="tarotAdmin" style="display:none;margin:20px 0;padding:15px;background:#f7f3f8;border-radius:12px;">
-  <summary style="cursor:pointer;font-weight:bold;">🔮 Режим таролога</summary>
-  <p>Вы вошли в режим таролога.</p>
-  <label for="replyCommentId">Номер комментария</label>
-  <input id="replyCommentId" type="number" min="1" placeholder="Например, 5">
-  <label for="tarotReply">Ваше послание</label>
-  <textarea id="tarotReply" maxlength="3000" placeholder="Напишите трактовку карты Таро..."></textarea>
-  <button id="publishReply" type="button">Опубликовать послание</button>
-  <p id="replyStatus"></p>
-</details>
-    {
+    * { box-sizing: border-box; }
+    body {
       margin: 0;
       padding: 20px;
       background: #f7f3f8;
@@ -41,8 +23,8 @@
       border-radius: 18px;
     }
     h1 { font-size: 24px; }
+    h2 { font-size: 20px; }
     textarea, input {
-      box-sizing: border-box;
       width: 100%;
       padding: 12px;
       margin: 8px 0;
@@ -54,6 +36,7 @@
     button {
       width: 100%;
       padding: 13px;
+      margin: 6px 0;
       border: 0;
       border-radius: 10px;
       background: #69468a;
@@ -61,6 +44,7 @@
       font-size: 16px;
       cursor: pointer;
     }
+    button:disabled { opacity: .6; cursor: wait; }
     .comment {
       border-bottom: 1px solid #eee6f1;
       padding: 14px 0;
@@ -82,7 +66,17 @@
       margin-bottom: 6px;
       color: #69468a;
     }
-    #status { margin: 12px 0; font-size: 14px; }
+    .admin {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f7f3f8;
+      border-radius: 12px;
+    }
+    #status, #loginStatus, #replyStatus {
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+    .answer-button { font-size: 14px; padding: 9px; }
   </style>
 </head>
 <body>
@@ -91,30 +85,35 @@
   <p>Обсуждаем публикацию и делимся мнениями.</p>
 
   <form id="commentForm">
-    <input id="author" maxlength="60"
-      placeholder="Ваше имя" required>
+    <input id="author" maxlength="60" placeholder="Ваше имя" required>
     <textarea id="content" maxlength="3000"
       placeholder="Напишите комментарий..." required></textarea>
     <button type="submit">Отправить комментарий</button>
   </form>
 
-  <p id="status"></p>
-  <details id="tarotAdmin" style="margin:20px 0;padding:15px;background:#f7f3f8;border-radius:12px;">
-  <summary style="cursor:pointer;font-weight:bold;">🔐 Ответ таролога</summary>
+  <p id="status" role="status"></p>
 
-  <p>Введите секретный пароль, чтобы опубликовать послание.</p>
+  <div id="tarotLogin" class="admin">
+    <h2>🔐 Вход таролога</h2>
+    <input id="loginPassword" type="password"
+      placeholder="Пароль таролога" autocomplete="current-password">
+    <button id="loginButton" type="button">Войти</button>
+    <p id="loginStatus" role="status"></p>
+  </div>
 
-  <input id="adminSecret" type="password" placeholder="Секретный пароль">
+  <details id="tarotAdmin" class="admin" style="display:none">
+    <summary style="cursor:pointer;font-weight:bold">🔮 Режим таролога</summary>
+    <p>Вы вошли в режим таролога. Выберите комментарий и опубликуйте ответ.</p>
+    <label for="replyCommentId">Номер комментария</label>
+    <input id="replyCommentId" type="number" min="1" placeholder="Например, 5">
+    <label for="tarotReply">Ваше послание</label>
+    <textarea id="tarotReply" maxlength="3000"
+      placeholder="Напишите трактовку карты Таро..."></textarea>
+    <button id="publishReply" type="button">Опубликовать послание</button>
+    <button id="logoutButton" type="button">Выйти из режима таролога</button>
+    <p id="replyStatus" role="status"></p>
+  </details>
 
-  <label for="replyCommentId">Номер комментария</label>
-  <input id="replyCommentId" type="number" min="1" placeholder="Например, 5">
-
-  <label for="tarotReply">Ваше послание</label>
-  <textarea id="tarotReply" maxlength="3000" placeholder="Напишите трактовку карты Таро..."></textarea>
-
-  <button id="publishReply" type="button">Опубликовать послание</button>
-  <p id="replyStatus"></p>
-</details>
   <h2>Обсуждение</h2>
   <div id="comments">Загрузка комментариев…</div>
 </main>
@@ -122,10 +121,10 @@
 <script>
   const SUPABASE_URL = "https://qptozhwwepdpaffiqgzi.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_MAKFTq7Nx92CutxSMCI3Cg_2ALdfsB_";
+  const SESSION_KEY = "tarot_admin_session";
 
   const db = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
+    SUPABASE_URL, SUPABASE_ANON_KEY
   );
 
   const params = new URLSearchParams(window.location.search);
@@ -133,8 +132,25 @@
   const status = document.getElementById("status");
   const list = document.getElementById("comments");
   const form = document.getElementById("commentForm");
+  const loginBox = document.getElementById("tarotLogin");
+  const adminBox = document.getElementById("tarotAdmin");
+  const loginStatus = document.getElementById("loginStatus");
+  const replyStatus = document.getElementById("replyStatus");
+
+  function showAdminMode() {
+    loginBox.style.display = "none";
+    adminBox.style.display = "block";
+  }
+
+  function showLoginMode(message = "") {
+    adminBox.style.display = "none";
+    loginBox.style.display = "block";
+    loginStatus.textContent = message;
+  }
 
   async function loadComments() {
+    list.textContent = "Загрузка комментариев…";
+
     const { data, error } = await db
       .from("comments")
       .select("id, author_name, content, created_at, reply, replied_at")
@@ -142,15 +158,14 @@
       .order("created_at", { ascending: true });
 
     if (error) {
-      list.textContent =
-        "Не удалось загрузить комментарии. Проверьте настройки доступа.";
+      list.textContent = "Не удалось загрузить комментарии. Попробуйте обновить страницу.";
       console.error(error);
       return;
     }
 
     list.replaceChildren();
 
-    if (!data.length) {
+    if (!data || data.length === 0) {
       list.textContent = "Пока нет комментариев. Будьте первым!";
       return;
     }
@@ -168,10 +183,14 @@
 
       const date = document.createElement("div");
       date.className = "date";
-      date.textContent =
-        new Date(item.created_at).toLocaleString("ru-RU");
+      date.textContent = new Date(item.created_at).toLocaleString("ru-RU");
 
       block.append(author, content, date);
+
+      const number = document.createElement("div");
+      number.className = "date";
+      number.textContent = "Номер комментария: " + item.id;
+      block.append(number);
 
       if (item.reply) {
         const reply = document.createElement("div");
@@ -183,22 +202,34 @@
 
         const text = document.createElement("div");
         text.textContent = item.reply;
-
         reply.append(title, text);
 
         if (item.replied_at) {
           const replyDate = document.createElement("div");
           replyDate.className = "date";
-          replyDate.textContent =
-            "Ответ опубликован: " +
+          replyDate.textContent = "Ответ опубликован: " +
             new Date(item.replied_at).toLocaleString("ru-RU");
           reply.append(replyDate);
         }
-
         block.append(reply);
       }
 
-      list.appendChild(block);
+      if (localStorage.getItem(SESSION_KEY)) {
+        const answerButton = document.createElement("button");
+        answerButton.type = "button";
+        answerButton.className = "answer-button";
+        answerButton.textContent = item.reply ? "Изменить послание" : "Ответить";
+        answerButton.addEventListener("click", () => {
+          document.getElementById("replyCommentId").value = item.id;
+          document.getElementById("tarotReply").value = item.reply || "";
+          replyStatus.textContent = "Выбран комментарий №" + item.id;
+          adminBox.open = true;
+          adminBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+        block.append(answerButton);
+      }
+
+      list.append(block);
     });
   }
 
@@ -217,12 +248,11 @@
     const { error } = await db.from("comments").insert({
       post_id: postId,
       author_name: author,
-      content: content
+      content
     });
 
     if (error) {
-      status.textContent =
-        "Не удалось отправить комментарий. Проверьте настройки доступа.";
+      status.textContent = "Не удалось отправить комментарий. Попробуйте позже.";
       console.error(error);
       return;
     }
@@ -232,25 +262,13 @@
     await loadComments();
   });
 
-  loadComments();
-  
-  
-  const loginBox = document.getElementById("tarotLogin");
-  const adminBox = document.getElementById("tarotAdmin");
-  const loginStatus = document.getElementById("loginStatus");
-  const SESSION_KEY = "tarot_admin_session";
-
-  function showAdminMode() {
-    loginBox.style.display = "none";
-    adminBox.style.display = "block";
-  }
   document.getElementById("loginButton").addEventListener("click", async () => {
     const password = document.getElementById("loginPassword").value;
     loginStatus.textContent = "Проверяем пароль…";
 
     try {
       const response = await fetch(
-        "https://qptozhwwepdpaffiqgzi.supabase.co/functions/v1/admin-login",
+        SUPABASE_URL + "/functions/v1/admin-login",
         {
           method: "POST",
           headers: {
@@ -269,83 +287,50 @@
 
       localStorage.setItem(SESSION_KEY, result.token);
       document.getElementById("loginPassword").value = "";
-      loginStatus.textContent = "Вход выполнен!";
       showAdminMode();
-    } catch (error) {
-      loginStatus.textContent = error.message || "Ошибка входа.";
-    }
-  });  if (localStorage.getItem(SESSION_KEY)) {
-    showAdminMode();
-  }
-
-  document.getElementById("loginButton").addEventListener("click", async () => {
-    const password = document.getElementById("loginPassword").value;
-    loginStatus.textContent = "Проверяем пароль…";
-
-    try {
-      const response = await fetch(
-        "https://qptozhwwepdpaffiqgzi.supabase.co/functions/v1/admin-login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "apikey": SUPABASE_ANON_KEY
-          },
-          body: JSON.stringify({ password })
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok || !result.token) {
-        throw new Error(result.message || "Не удалось войти.");
-      }
-
-      localStorage.setItem(SESSION_KEY, result.token);
-      document.getElementById("loginPassword").value = "";
-      loginStatus.textContent = "Вход выполнен!";
-      showAdminMode();
+      await loadComments();
+      loginStatus.textContent = "";
     } catch (error) {
       loginStatus.textContent = error.message || "Ошибка входа.";
     }
   });
 
+  document.getElementById("logoutButton").addEventListener("click", () => {
+    localStorage.removeItem(SESSION_KEY);
+    showLoginMode("Вы вышли из режима таролога.");
+    loadComments();
+  });
+
   document.getElementById("publishReply").addEventListener("click", async () => {
     const commentId = document.getElementById("replyCommentId").value.trim();
     const reply = document.getElementById("tarotReply").value.trim();
-    const replyStatus = document.getElementById("replyStatus");
-    const publishButton = document.getElementById("publishReply");
+    const button = document.getElementById("publishReply");
     const token = localStorage.getItem(SESSION_KEY);
 
     if (!token) {
-      adminBox.style.display = "none";
-      loginBox.style.display = "block";
-      loginStatus.textContent = "Войдите в режим таролога.";
+      showLoginMode("Войдите в режим таролога.");
       return;
     }
 
     if (!commentId || !reply) {
-      replyStatus.textContent = "Укажите номер комментария и текст послания.";
+      replyStatus.textContent = "Выберите комментарий и напишите послание.";
       return;
     }
 
-    publishButton.disabled = true;
+    button.disabled = true;
     replyStatus.textContent = "Публикуем послание…";
 
     try {
       const response = await fetch(
-        "https://qptozhwwepdpaffiqgzi.supabase.co/functions/v1/admin-reply",
+        SUPABASE_URL + "/functions/v1/admin-reply",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "apikey": SUPABASE_ANON_KEY,
-            "Authorization": `Bearer ${token}`
+            "Authorization": "Bearer " + token
           },
-          body: JSON.stringify({
-            id: Number(commentId),
-            reply
-          })
+          body: JSON.stringify({ id: Number(commentId), reply })
         }
       );
 
@@ -353,10 +338,8 @@
 
       if (response.status === 401) {
         localStorage.removeItem(SESSION_KEY);
-        adminBox.style.display = "none";
-        loginBox.style.display = "block";
-        loginStatus.textContent = "Сессия недействительна. Войдите снова.";
-        throw new Error("Пожалуйста, войдите снова.");
+        showLoginMode("Сессия истекла. Войдите снова.");
+        return;
       }
 
       if (!response.ok) {
@@ -369,10 +352,15 @@
     } catch (error) {
       replyStatus.textContent = error.message || "Ошибка публикации.";
     } finally {
-      publishButton.disabled = false;
+      button.disabled = false;
     }
   });
 
+  if (localStorage.getItem(SESSION_KEY)) {
+    showAdminMode();
+  }
+
+  loadComments();
 </script>
 </body>
 </html>
