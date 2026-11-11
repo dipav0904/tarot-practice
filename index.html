@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Комментарии к Таро</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * { box-sizing: border-box; }
 
@@ -84,13 +85,6 @@
       border-radius: 12px;
     }
 
-    #status, #loginStatus, #replyStatus, #readingStatus {
-      font-size: 14px;
-      overflow-wrap: anywhere;
-    }
-
-    .answer-button { font-size: 14px; padding: 9px; }
-
     .reading-card {
       margin: 12px 0;
       padding: 15px;
@@ -114,11 +108,27 @@
     }
 
     .reading-editor textarea { min-height: 130px; }
+
+    .reading-photo {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 12px 0 18px;
+    }
+
+    #status, #loginStatus, #replyStatus, #readingStatus {
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .answer-button { font-size: 14px; padding: 9px; }
   </style>
 </head>
 
 <body>
 <main>
+
   <h1>Комментарии 🔮</h1>
   <p>Обсуждаем публикацию и делимся мнениями.</p>
 
@@ -129,8 +139,10 @@
 
   <form id="commentForm">
     <input id="author" maxlength="60" placeholder="Ваше имя" required>
+
     <textarea id="content" maxlength="3000"
       placeholder="Напишите комментарий..." required></textarea>
+
     <button type="submit">Отправить комментарий</button>
   </form>
 
@@ -138,71 +150,97 @@
 
   <div id="tarotLogin" class="admin">
     <h2>🔐 Вход таролога</h2>
+
     <input id="loginPassword" type="password"
       placeholder="Пароль таролога" autocomplete="current-password">
+
     <button id="loginButton" type="button">Войти</button>
     <p id="loginStatus" role="status"></p>
   </div>
 
   <details id="tarotAdmin" class="admin" style="display:none">
-    <summary style="cursor:pointer;font-weight:bold">🔮 Режим таролога</summary>
+
+    <summary style="cursor:pointer;font-weight:bold">
+      🔮 Режим таролога
+    </summary>
 
     <p>Вы вошли в режим таролога. Здесь можно отвечать на комментарии и публиковать расшифровки.</p>
 
     <div class="reading-editor">
+
       <h2>Опубликовать расшифровку</h2>
-      <p>Заполните от одного до шести вариантов. Пустые варианты не будут опубликованы.</p>
 
-<label for="readingPhoto">Общее фото к расшифровке</label>
-<input id="readingPhoto" type="file" accept="image/jpeg,image/png,image/webp">
+      <p>Заполните от одного до шести вариантов. Пустые варианты не публикуются.</p>
 
-<label for="readingA">Вариант А</label>
-<textarea id="readingA" maxlength="10000" placeholder="Текст варианта А..."></textarea>
+      <label for="readingPhoto">Общее фото к расшифровке</label>
+      <input id="readingPhoto" type="file"
+        accept="image/jpeg,image/png,image/webp">
 
-<label for="readingB">Вариант Б</label>
-<textarea id="readingB" maxlength="10000" placeholder="Текст варианта Б..."></textarea>
+      <label for="readingA">Вариант А</label>
+      <textarea id="readingA" maxlength="10000"
+        placeholder="Текст варианта А..."></textarea>
 
-<label for="readingC">Вариант В</label>
-<textarea id="readingC" maxlength="10000" placeholder="Текст варианта В..."></textarea>
+      <label for="readingB">Вариант Б</label>
+      <textarea id="readingB" maxlength="10000"
+        placeholder="Текст варианта Б..."></textarea>
 
-<label for="readingD">Вариант Г</label>
-<textarea id="readingD" maxlength="10000" placeholder="Текст варианта Г..."></textarea>
+      <label for="readingC">Вариант В</label>
+      <textarea id="readingC" maxlength="10000"
+        placeholder="Текст варианта В..."></textarea>
 
-<label for="readingE">Вариант Д</label>
-<textarea id="readingE" maxlength="10000" placeholder="Текст варианта Д..."></textarea>
+      <label for="readingD">Вариант Г</label>
+      <textarea id="readingD" maxlength="10000"
+        placeholder="Текст варианта Г..."></textarea>
 
-<label for="readingF">Вариант Е</label>
-<textarea id="readingF" maxlength="10000" placeholder="Текст варианта Е..."></textarea>
-        
+      <label for="readingE">Вариант Д</label>
+      <textarea id="readingE" maxlength="10000"
+        placeholder="Текст варианта Д..."></textarea>
+
+      <label for="readingF">Вариант Е</label>
+      <textarea id="readingF" maxlength="10000"
+        placeholder="Текст варианта Е..."></textarea>
+
       <button id="publishReadings" type="button">
         Опубликовать расшифровку
       </button>
 
       <p id="readingStatus" role="status"></p>
+
     </div>
 
     <div class="reading-editor">
+
       <h2>Ответы на комментарии</h2>
 
       <label for="replyCommentId">Номер комментария</label>
-      <input id="replyCommentId" type="number" min="1" placeholder="Например, 5">
+      <input id="replyCommentId" type="number" min="1"
+        placeholder="Например, 5">
 
       <label for="tarotReply">Ваше послание</label>
       <textarea id="tarotReply" maxlength="3000"
         placeholder="Напишите трактовку карты Таро..."></textarea>
 
-      <button id="publishReply" type="button">Опубликовать послание</button>
+      <button id="publishReply" type="button">
+        Опубликовать послание
+      </button>
+
       <p id="replyStatus" role="status"></p>
+
     </div>
 
-    <button id="logoutButton" type="button">Выйти из режима таролога</button>
+    <button id="logoutButton" type="button">
+      Выйти из режима таролога
+    </button>
+
   </details>
 
   <h2>Обсуждение</h2>
   <div id="comments">Загрузка комментариев…</div>
+
 </main>
 
 <script>
+
   const SUPABASE_URL = "https://qptozhwwepdpaffiqgzi.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_MAKFTq7Nx92CutxSMCI3Cg_2ALdfsB_";
   const SESSION_KEY = "tarot_admin_session";
@@ -218,11 +256,16 @@
   const status = document.getElementById("status");
   const list = document.getElementById("comments");
   const form = document.getElementById("commentForm");
+
   const loginBox = document.getElementById("tarotLogin");
   const adminBox = document.getElementById("tarotAdmin");
+
   const loginStatus = document.getElementById("loginStatus");
   const replyStatus = document.getElementById("replyStatus");
   const readingStatus = document.getElementById("readingStatus");
+
+
+  // Режим таролога
 
   function showAdminMode() {
     loginBox.style.display = "none";
@@ -235,14 +278,18 @@
     loginStatus.textContent = message;
   }
 
-  // Загрузка расшифровки для текущей публикации
+
+  // Загрузка расшифровки
+
   async function loadReadings() {
+
     const container = document.getElementById("readings");
+
     container.textContent = "Загрузка расшифровки…";
 
     const { data, error } = await db
       .from("post_readings")
-      .select("answers")
+      .select("answers, photo_url")
       .eq("post_id", postId)
       .maybeSingle();
 
@@ -254,31 +301,68 @@
 
     container.replaceChildren();
 
-    if (!data || !Array.isArray(data.answers) || data.answers.length !== 3) {
+    if (!data) {
       container.textContent = "Для этой публикации пока нет расшифровки.";
       return;
     }
 
-    const titles = ["Вариант А", "Вариант Б", "Вариант В"];
+    // Общее фото
 
-    data.answers.forEach((answer, index) => {
-      const card = document.createElement("div");
-      card.className = "reading-card";
+    if (data.photo_url) {
 
-      const title = document.createElement("div");
-      title.className = "reading-title";
-      title.textContent = titles[index];
+      const photo = document.createElement("img");
 
-      const content = document.createElement("div");
-      content.textContent = answer;
+      photo.className = "reading-photo";
+      photo.src = data.photo_url;
+      photo.alt = "Фото к расшифровке";
 
-      card.append(title, content);
-      container.append(card);
-    });
+      container.append(photo);
+    }
+
+    // Варианты ответов
+
+    const titles = [
+      "Вариант А",
+      "Вариант Б",
+      "Вариант В",
+      "Вариант Г",
+      "Вариант Д",
+      "Вариант Е"
+    ];
+
+    if (Array.isArray(data.answers)) {
+
+      data.answers.slice(0, 6).forEach((answer, index) => {
+
+        if (typeof answer !== "string" || !answer.trim()) return;
+
+        const card = document.createElement("div");
+        card.className = "reading-card";
+
+        const title = document.createElement("div");
+        title.className = "reading-title";
+        title.textContent = titles[index];
+
+        const content = document.createElement("div");
+        content.textContent = answer;
+
+        card.append(title, content);
+        container.append(card);
+
+      });
+    }
+
+    if (!container.children.length) {
+      container.textContent = "Для этой публикации пока нет расшифровки.";
+    }
+
   }
 
+
   // Загрузка комментариев
+
   async function loadComments() {
+
     list.textContent = "Загрузка комментариев…";
 
     const { data, error } = await db
@@ -301,6 +385,7 @@
     }
 
     data.forEach(item => {
+
       const block = document.createElement("div");
       block.className = "comment";
 
@@ -320,9 +405,13 @@
       const number = document.createElement("div");
       number.className = "date";
       number.textContent = "Номер комментария: " + item.id;
+
       block.append(number);
 
+      // Ответ таролога
+
       if (item.reply) {
+
         const reply = document.createElement("div");
         reply.className = "reply";
 
@@ -336,40 +425,61 @@
         reply.append(title, text);
 
         if (item.replied_at) {
+
           const replyDate = document.createElement("div");
           replyDate.className = "date";
+
           replyDate.textContent = "Ответ опубликован: " +
             new Date(item.replied_at).toLocaleString("ru-RU");
+
           reply.append(replyDate);
         }
 
         block.append(reply);
       }
 
+      // Кнопка ответа таролога
+
       if (localStorage.getItem(SESSION_KEY)) {
+
         const answerButton = document.createElement("button");
+
         answerButton.type = "button";
         answerButton.className = "answer-button";
         answerButton.textContent = item.reply ? "Изменить послание" : "Ответить";
 
         answerButton.addEventListener("click", () => {
+
           document.getElementById("replyCommentId").value = item.id;
           document.getElementById("tarotReply").value = item.reply || "";
+
           replyStatus.textContent = "Выбран комментарий №" + item.id;
+
           adminBox.open = true;
-          adminBox.scrollIntoView({ behavior: "smooth", block: "center" });
+
+          adminBox.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+
         });
 
         block.append(answerButton);
       }
 
       list.append(block);
+
     });
+
   }
 
+
   // Отправка комментария
+
   form.addEventListener("submit", async event => {
+
     event.preventDefault();
+
     status.textContent = "Отправляем…";
 
     const author = document.getElementById("author").value.trim();
@@ -393,16 +503,24 @@
     }
 
     form.reset();
+
     status.textContent = "Комментарий опубликован!";
+
     await loadComments();
+
   });
 
+
   // Вход таролога
+
   document.getElementById("loginButton").addEventListener("click", async () => {
+
     const password = document.getElementById("loginPassword").value;
+
     loginStatus.textContent = "Проверяем пароль…";
 
     try {
+
       const response = await fetch(
         SUPABASE_URL + "/functions/v1/admin-login",
         {
@@ -422,29 +540,83 @@
       }
 
       localStorage.setItem(SESSION_KEY, result.token);
+
       document.getElementById("loginPassword").value = "";
+
       showAdminMode();
+
       loginStatus.textContent = "";
+
       await loadComments();
+
     } catch (error) {
+
       loginStatus.textContent = error.message || "Ошибка входа.";
+
     }
+
   });
+
 
   // Выход таролога
+
   document.getElementById("logoutButton").addEventListener("click", () => {
+
     localStorage.removeItem(SESSION_KEY);
+
     showLoginMode("Вы вышли из режима таролога.");
+
     loadComments();
+
   });
 
-  // Публикация трех расшифровок
+
+  // Чтение фотографии
+
+  function readFileAsBase64(file) {
+
+    return new Promise((resolve, reject) => {
+
+      const reader = new FileReader();
+
+      reader.onload = () => {
+
+        const result = String(reader.result);
+
+        resolve(result.split(",")[1]);
+
+      };
+
+      reader.onerror = () => {
+        reject(new Error("Не удалось прочитать фотографию."));
+      };
+
+      reader.readAsDataURL(file);
+
+    });
+
+  }
+
+
+  // Публикация расшифровки
+
   document.getElementById("publishReadings").addEventListener("click", async () => {
-    const answers = [
-      document.getElementById("readingA").value.trim(),
-      document.getElementById("readingB").value.trim(),
-      document.getElementById("readingC").value.trim()
+
+    const fields = [
+      "readingA",
+      "readingB",
+      "readingC",
+      "readingD",
+      "readingE",
+      "readingF"
     ];
+
+    const answers = fields
+      .map(id => document.getElementById(id).value.trim())
+      .filter(answer => answer.length > 0);
+
+    const photoInput = document.getElementById("readingPhoto");
+    const photo = photoInput.files[0];
 
     const button = document.getElementById("publishReadings");
     const token = localStorage.getItem(SESSION_KEY);
@@ -454,15 +626,49 @@
       return;
     }
 
-    if (answers.some(answer => !answer)) {
-      readingStatus.textContent = "Заполните все три варианта.";
+    if (answers.length === 0) {
+      readingStatus.textContent = "Заполните хотя бы один вариант.";
       return;
     }
 
+    if (photo) {
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ];
+
+      if (!allowedTypes.includes(photo.type)) {
+        readingStatus.textContent = "Поддерживаются JPG, PNG и WEBP.";
+        return;
+      }
+
+      if (photo.size > 5 * 1024 * 1024) {
+        readingStatus.textContent = "Фото должно быть не больше 5 МБ.";
+        return;
+      }
+
+    }
+
     button.disabled = true;
+
     readingStatus.textContent = "Публикуем расшифровку…";
 
     try {
+
+      const body = {
+        post_id: postId,
+        answers
+      };
+
+      if (photo) {
+
+        body.photo_base64 = await readFileAsBase64(photo);
+        body.photo_type = photo.type;
+
+      }
+
       const response = await fetch(
         SUPABASE_URL + "/functions/v1/admin-readings",
         {
@@ -472,39 +678,62 @@
             "apikey": SUPABASE_ANON_KEY,
             "Authorization": "Bearer " + token
           },
-          body: JSON.stringify({
-            post_id: postId,
-            answers
-          })
+          body: JSON.stringify(body)
         }
       );
 
       const result = await response.json();
 
       if (response.status === 401) {
+
         localStorage.removeItem(SESSION_KEY);
+
         showLoginMode("Сессия истекла. Войдите снова.");
+
         return;
       }
 
       if (!response.ok) {
-        throw new Error(result.message || "Не удалось опубликовать расшифровку.");
+        throw new Error(
+          result.message || "Не удалось опубликовать расшифровку."
+        );
       }
 
       readingStatus.textContent = "Расшифровка опубликована!";
+
+      // Очищаем поля после успешной публикации
+
+      fields.forEach(id => {
+        document.getElementById(id).value = "";
+      });
+
+      photoInput.value = "";
+
       await loadReadings();
+
     } catch (error) {
+
       readingStatus.textContent = error.message || "Ошибка публикации.";
+
     } finally {
+
       button.disabled = false;
+
     }
+
   });
 
+
   // Публикация ответа на комментарий
+
   document.getElementById("publishReply").addEventListener("click", async () => {
+
     const commentId = document.getElementById("replyCommentId").value.trim();
+
     const reply = document.getElementById("tarotReply").value.trim();
+
     const button = document.getElementById("publishReply");
+
     const token = localStorage.getItem(SESSION_KEY);
 
     if (!token) {
@@ -518,9 +747,11 @@
     }
 
     button.disabled = true;
+
     replyStatus.textContent = "Публикуем послание…";
 
     try {
+
       const response = await fetch(
         SUPABASE_URL + "/functions/v1/admin-reply",
         {
@@ -530,38 +761,61 @@
             "apikey": SUPABASE_ANON_KEY,
             "Authorization": "Bearer " + token
           },
-          body: JSON.stringify({ id: Number(commentId), reply })
+          body: JSON.stringify({
+            id: Number(commentId),
+            reply
+          })
         }
       );
 
       const result = await response.json();
 
       if (response.status === 401) {
+
         localStorage.removeItem(SESSION_KEY);
+
         showLoginMode("Сессия истекла. Войдите снова.");
+
         return;
       }
 
       if (!response.ok) {
-        throw new Error(result.message || "Не удалось опубликовать ответ.");
+        throw new Error(
+          result.message || "Не удалось опубликовать ответ."
+        );
       }
 
       replyStatus.textContent = "Послание опубликовано!";
+
       document.getElementById("tarotReply").value = "";
+
       await loadComments();
+
     } catch (error) {
+
       replyStatus.textContent = error.message || "Ошибка публикации.";
+
     } finally {
+
       button.disabled = false;
+
     }
+
   });
+
+
+  // Восстановление сессии
 
   if (localStorage.getItem(SESSION_KEY)) {
     showAdminMode();
   }
 
+  // Первоначальная загрузка
+
   loadReadings();
   loadComments();
+
 </script>
+
 </body>
 </html>
