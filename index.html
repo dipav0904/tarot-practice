@@ -151,21 +151,29 @@
 
     <div class="reading-editor">
       <h2>Опубликовать расшифровку</h2>
-      <p>Заполните три варианта. Они появятся на странице для всех посетителей.</p>
+      <p>Заполните от одного до шести вариантов. Пустые варианты не будут опубликованы.</p>
+
 <label for="readingPhoto">Общее фото к расшифровке</label>
-<input id="readingPhoto" type="file" accept="image/*">
-      <label for="readingA">Вариант А</label>
-      <textarea id="readingA" maxlength="10000"
-        placeholder="Текст расшифровки варианта А..."></textarea>
+<input id="readingPhoto" type="file" accept="image/jpeg,image/png,image/webp">
 
-      <label for="readingB">Вариант Б</label>
-      <textarea id="readingB" maxlength="10000"
-        placeholder="Текст расшифровки варианта Б..."></textarea>
+<label for="readingA">Вариант А</label>
+<textarea id="readingA" maxlength="10000" placeholder="Текст варианта А..."></textarea>
 
-      <label for="readingC">Вариант В</label>
-      <textarea id="readingC" maxlength="10000"
-        placeholder="Текст расшифровки варианта В..."></textarea>
+<label for="readingB">Вариант Б</label>
+<textarea id="readingB" maxlength="10000" placeholder="Текст варианта Б..."></textarea>
 
+<label for="readingC">Вариант В</label>
+<textarea id="readingC" maxlength="10000" placeholder="Текст варианта В..."></textarea>
+
+<label for="readingD">Вариант Г</label>
+<textarea id="readingD" maxlength="10000" placeholder="Текст варианта Г..."></textarea>
+
+<label for="readingE">Вариант Д</label>
+<textarea id="readingE" maxlength="10000" placeholder="Текст варианта Д..."></textarea>
+
+<label for="readingF">Вариант Е</label>
+<textarea id="readingF" maxlength="10000" placeholder="Текст варианта Е..."></textarea>
+        
       <button id="publishReadings" type="button">
         Опубликовать расшифровку
       </button>
